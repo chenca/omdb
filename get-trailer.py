@@ -25,10 +25,10 @@ crl = curl.Curl(uri)
 data = crl.get()
 crl.close()
 
-if hd:
-    url = re.findall("http.*fmt\%3D22", data)[0]
-else:
-    url = re.findall("http.*fmt\%3D18", data)[0]
+url = re.findall("http.*fmt\%3D18", data)[0]
+res = re.findall("http.*fmt\%3D22", data)
+if hd and len(res):
+    url = res[0]
 
 print "Location: %s" % ("http://keep-tube.com/dl.php?r=" + url)
 print
