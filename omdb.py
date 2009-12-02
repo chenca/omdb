@@ -7,7 +7,6 @@ import ConfigParser
 import pickle
 
 from imdb import movie_info
-from trailers import search_trailers
 from template import *
 
 def cgi_params():
