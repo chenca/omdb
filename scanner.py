@@ -4,10 +4,18 @@ import cgi
 import os, sys, re
 import pickle
 import curl
+import ConfigParser
+
 from imdb import movie_info, imdb_info
 from trailers import search_trailers
 
-from template import dirs_location
+config = ConfigParser.ConfigParser()
+config.read('config.ini')
+
+dirs = [d.strip() for d in config.get('general', 'watch_dirs').split(",")]
+covers_url = config.get('general', 'covers_url')
+covers_path = config.get('general', 'covers_path')
+create_covers_links = config.getboolean('scanner', 'create_covers_links')
 
 def unescape(text):
    def fixup(m):
@@ -32,8 +40,9 @@ def store_info(imdb_url, imdb_title, imdb_cover, imdb_date, imdb_rating, imdb_pl
     info['imdb_date'] = imdb_date
     info['imdb_rating'] = imdb_rating
     info['imdb_plot'] = imdb_plot
-    info['cover_url'] = "/covers/" + os.path.basename(imdb_cover) + "_SMALL.jpg"
-    info['cover_link'] = "/covers/" + os.path.basename(imdb_cover) + "_.jpg"
+    base_cover = os.path.basename(imdb_cover)
+    info['cover_url'] = os.path.join(covers_url, base_cover + "_SMALL.jpg")
+    info['cover_link'] = os.path.join(covers_url, base_cover + "_.jpg")
 
     if len(trailers) > 0 :
         info['trailer_url1'] = trailers[0][0]
@@ -62,37 +71,43 @@ def store_info(imdb_url, imdb_title, imdb_cover, imdb_date, imdb_rating, imdb_pl
         crl = curl.Curl(imdb_cover + "_.jpg")
         data = crl.get()
         crl.close()
-        cover = open("/var/www/localhost/htdocs" + info['cover_link'], "wb")
+        cover = open(os.path.join(covers_path, base_cover + "_.jpg"), "wb")
         cover.write(data)
         cover.close()
         if imdb_cover != "nocover":
             crl = curl.Curl(imdb_cover + "_SX135_SY200_.jpg")
             data = crl.get()
             crl.close()
-            cover = open("/var/www/localhost/htdocs" + info['cover_url'], "wb")
+            cover = open(os.path.join(covers_path, base_cover + "_SMALL.jpg"), "wb")
             cover.write(data)
             cover.close()
 
-        print "Writing data"
+    if create_covers_links:
+        link = os.path.join(dest, "cover.jpg")
 
-        nfo = open(os.path.join(dest, "nfo.pickle"), "wb")
-        pickle.dump(info, nfo)
-        nfo.close()
+        if os.path.exists(link):
+            os.unlink(link)
 
-        print dest, "-->", imdb_title, "ok\n"
+        os.symlink(os.path.join(covers_path, base_cover + "_SMALL.jpg"), link)
+
+    print "Writing data"
+
+    nfo = open(os.path.join(dest, "nfo.pickle"), "wb")
+    pickle.dump(info, nfo)
+    nfo.close()
+
+    print dest, "-->", imdb_title, "ok\n"
 
 
 def scan_dirs(location):
 
-    dirs = [d[:-1] for d in open(location).readlines() if d[:-1] != '']
-
-    for d in dirs:
+    for d in location:
         movies = [i for i in os.listdir(d) if os.path.isdir(os.path.join(d, i))]
         movies.sort()
         for m in movies:
             if os.path.exists(os.path.join(d,m,"nfo.pickle")):
                 print "\n\nNFO already found: %s" % m
-                #continue
+
                 nfo = open(os.path.join(d,m,"nfo.pickle"), 'rb')
                 info = pickle.load(nfo)
                 nfo.close()
@@ -123,4 +138,4 @@ if len(sys.argv) == 3:
     trailers = search_trailers(unescape(imdb_title) + " Official Trailer ")
     store_info(imdb_url, imdb_title, imdb_cover, imdb_date, imdb_rating, imdb_plot, trailers, folder)
 else:
-    scan_dirs(dirs_location)
+    scan_dirs(dirs)
