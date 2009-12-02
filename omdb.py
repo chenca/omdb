@@ -61,14 +61,14 @@ def sort_date(x, y):
         return -1
 
     xY = xdata[2]
-    xD = xdata[0]
+    xD = int(xdata[0])
     xM = months[xdata[1]]
 
     yY = ydata[2]
-    yD = ydata[0]
+    yD = int(ydata[0])
     yM = months[ydata[1]]
 
-    return sort_string(" ".join([yY, yM, yD]), " ".join([xY, xM, yD]))
+    return sort_string(" ".join([yY, yM, "%02d" % yD]), " ".join([xY, xM, "%02d" % xD]))
 
 sort_options = {'imdb_rating': sort_rate, 'movie_title': sort_title, 'imdb_date': sort_date }
 
