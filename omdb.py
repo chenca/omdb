@@ -79,7 +79,7 @@ config.read('config.ini')
 dirs = [d.strip() for d in config.get('general', 'watch_dirs').split(",")]
 
 info = {'css_url' : config.get('general', 'css_url'),
-        'base_url' : config.get('general', 'base') }
+        'base_url' : config.get('general', 'base_url') }
 
 print header % info
 
