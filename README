@@ -1,1 +1,12 @@
 Offline Movie Database
+
+config.ini example:
+
+[general]
+
+  watch_dirs = /home/chenca/downloads/movies, /media/disk/videos/PS3/movies
+  css_url = /css
+  cgi_url = /cgi/omdb
+  base_url = /media
+
+[scanner]

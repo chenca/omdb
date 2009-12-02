@@ -3,6 +3,7 @@
 
 import cgi
 import os, urllib2
+import ConfigParser
 import pickle
 
 from imdb import movie_info
@@ -23,7 +24,6 @@ if 'sort' in params.keys():
 else:
     sortby = 'movie_title'
 
-
 def sort_string(x, y):
     if x > y:
         return 1
@@ -31,7 +31,6 @@ def sort_string(x, y):
         return 0
     else:
         return -1
-
 
 def sort_title(x, y):
     return sort_string(x[sortby], y[sortby])
@@ -74,9 +73,15 @@ def sort_date(x, y):
 
 sort_options = {'imdb_rating': sort_rate, 'movie_title': sort_title, 'imdb_date': sort_date }
 
-dirs = [d[:-1] for d in open(dirs_location).readlines() if d[:-1] != '']
+config = ConfigParser.ConfigParser()
+config.read('config.ini')
 
-print header
+dirs = [d.strip() for d in config.get('general', 'watch_dirs').split(",")]
+
+info = {'css_url' : config.get('general', 'css_url'),
+        'base_url' : config.get('general', 'base') }
+
+print header % info
 
 info_list = []
 for d in dirs:
@@ -92,15 +97,12 @@ for d in dirs:
         nfo = open(path, 'rb')
         info = pickle.load(nfo)
         nfo.close()
+
+        info['cgi_url'] = config.get('general', 'cgi_url')
         info_list.append(info)
 
 info_list.sort(sort_options[sortby])
 for info in info_list:
-#    try:
-        print movie % info
-#    except:
-#        s = unicode(movie).encode("utf-8") % info
-#        print s.encode("utf-8")
-#        pass
+    print movie % info
 
 print footer

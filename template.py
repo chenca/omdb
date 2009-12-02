@@ -1,17 +1,14 @@
-dirs_location = "/var/www/localhost/htdocs/cgi/oversight/dirs"
-
 header = '''\
 Content-type: text/html
-
 
 <html>
 <head>
 <title> Media Library </title>
-<link id="www-core-css" rel="stylesheet" href="/css/www-core-vfl134429.css">
-<link  rel="stylesheet" href="/css/www-the-rest-vfl134429.css">
-<link  rel="stylesheet" href="/css/www-browse-vfl134246.css">
-<link  rel="stylesheet" href="/css/www-hovercard-vfl130085.css">
-<script src="/css/www-hovercard-vfl133369.js"></script>
+<link id="core-css" rel="stylesheet" href="/css/core.css">
+<link  rel="stylesheet" href="%(css_url)s/the-rest.css">
+<link  rel="stylesheet" href="%(css_url)s/browse.css">
+<link  rel="stylesheet" href="%(css_url)s/hovercard.css">
+<script src="%(css_url)s/hovercard.js"></script>
 
 </head>
 <body>
@@ -24,13 +21,13 @@ Content-type: text/html
 	Sort By:
 	</div>
 	<div class="subcategory ">
-	<a href="/media/?sort=movie_title">Movie Name</a>
+	<a href="%(base_url)s/?sort=movie_title">Movie Name</a>
 	</div>
 	<div class="subcategory ">
-	<a href="/media/?sort=imdb_rating">IMDB Rating</a>
+	<a href="%(base_url)s/?sort=imdb_rating">IMDB Rating</a>
 	</div>
 	<div class="subcategory ">
-	<a href="/media/?sort=imdb_date">Release Date</a>
+	<a href="%(base_url)s/?sort=imdb_date">Release Date</a>
 	</div>
 	<div class="clear"></div>
      </div>
@@ -63,9 +60,9 @@ movie = '''\
 	  <div class="trailer-facets smallText">
 		<span class="grayText"><a href="%(imdb_url)s">IMDB Link</a></span>
 		<span class="grayText">Trailers:
-                  <a href="/cgi/oversight/get-trailer.py?uid=%(trailer_url1)s" class="yt-uix-hovercard-target" title="%(trailer_title1)s">#1</a>
-		  <a href="/cgi/oversight/get-trailer.py?uid=%(trailer_url2)s" class="yt-uix-hovercard-target" title="%(trailer_title2)s">#2</a>
-		  <a href="/cgi/oversight/get-trailer.py?uid=%(trailer_url3)s" class="yt-uix-hovercard-target" title="%(trailer_title3)s">#3</a>
+          <a href="%(cgi_url)s/get-trailer.py?uid=%(trailer_url1)s" class="yt-uix-hovercard-target" title="%(trailer_title1)s">#1</a>
+		  <a href="%(cgi_url)s/get-trailer.py?uid=%(trailer_url2)s" class="yt-uix-hovercard-target" title="%(trailer_title2)s">#2</a>
+		  <a href="%(cgi_url)s/get-trailer.py?uid=%(trailer_url3)s" class="yt-uix-hovercard-target" title="%(trailer_title3)s">#3</a>
 		</span>
 	  </div>
 	</div>
